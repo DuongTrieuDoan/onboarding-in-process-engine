@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
+             xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/"
+             xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
+             xmlns:camunda="http://camunda.org/schema/1.0/dmn"
+             id="Definitions_ActivationGate"
+             name="Activation Gate Definitions"
+             namespace="http://camunda.org/schema/1.0/dmn">
+
+  <decision id="decision_activation_gate" name="Activation Gate Fulfillment Evaluation" camunda:historyTimeToLive="30">
+    <decisionTable id="DecisionTable_ActivationGate" hitPolicy="FIRST">
+      <input id="Input_idStatus" label="ID Status" camunda:inputVariable="idStatus">
+        <inputExpression id="InputExpression_idStatus" typeRef="string">
+          <text>idStatus</text>
+        </inputExpression>
+      </input>
+      <input id="Input_insuranceStatus" label="Insurance Status" camunda:inputVariable="insuranceStatus">
+        <inputExpression id="InputExpression_insuranceStatus" typeRef="string">
+          <text>insuranceStatus</text>
+        </inputExpression>
+      </input>
+      <input id="Input_bgcChStatus" label="BGC Criminal History" camunda:inputVariable="bgcChStatus">
+        <inputExpression id="InputExpression_bgcChStatus" typeRef="string">
+          <text>bgcChStatus</text>
+        </inputExpression>
+      </input>
+      <input id="Input_bgcRtwStatus" label="BGC Right to Work" camunda:inputVariable="bgcRtwStatus">
+        <inputExpression id="InputExpression_bgcRtwStatus" typeRef="string">
+          <text>bgcRtwStatus</text>
+        </inputExpression>
+      </input>
+      <input id="Input_bagStatus" label="Thermal Bag Status" camunda:inputVariable="bagStatus">
+        <inputExpression id="InputExpression_bagStatus" typeRef="string">
+          <text>bagStatus</text>
+        </inputExpression>
+      </input>
+
+      <output id="Output_activationAllowed" label="Activation Allowed" name="activationAllowed" typeRef="boolean" />
+      <output id="Output_actionRequired" label="Action Required" name="actionRequired" typeRef="string" />
+      <output id="Output_blockingRequirement" label="Blocking Requirement" name="blockingRequirement" typeRef="string" />
+
+      <rule id="Rule_AllMandatoryApproved">
+        <inputEntry id="Entry_A1_1"><text>"APPROVED"</text></inputEntry>
+        <inputEntry id="Entry_A1_2"><text>"APPROVED"</text></inputEntry>
+        <inputEntry id="Entry_A1_3"><text>"CLEAR"</text></inputEntry>
+        <inputEntry id="Entry_A1_4"><text>"CLEAR"</text></inputEntry>
+        <inputEntry id="Entry_A1_5"><text>-</text></inputEntry>
+        <outputEntry id="Output_A1_1"><text>true</text></outputEntry>
+        <outputEntry id="Output_A1_2"><text>"ROUTE_TO_ACTIVATION"</text></outputEntry>
+        <outputEntry id="Output_A1_3"><text>"NONE"</text></outputEntry>
+      </rule>
+
+      <rule id="Rule_IdNotApproved">
+        <inputEntry id="Entry_A2_1"><text>not("APPROVED")</text></inputEntry>
+        <inputEntry id="Entry_A2_2"><text>-</text></inputEntry>
+        <inputEntry id="Entry_A2_3"><text>-</text></inputEntry>
+        <inputEntry id="Entry_A2_4"><text>-</text></inputEntry>
+        <inputEntry id="Entry_A2_5"><text>-</text></inputEntry>
+        <outputEntry id="Output_A2_1"><text>false</text></outputEntry>
+        <outputEntry id="Output_A2_2"><text>"AWAIT_REMEDIATION"</text></outputEntry>
+        <outputEntry id="Output_A2_3"><text>"IDENTITY_VERIFICATION"</text></outputEntry>
+      </rule>
+
+      <rule id="Rule_InsuranceNotApproved">
+        <inputEntry id="Entry_A3_1"><text>-</text></inputEntry>
+        <inputEntry id="Entry_A3_2"><text>not("APPROVED")</text></inputEntry>
+        <inputEntry id="Entry_A3_3"><text>-</text></inputEntry>
+        <inputEntry id="Entry_A3_4"><text>-</text></inputEntry>
+        <inputEntry id="Entry_A3_5"><text>-</text></inputEntry>
+        <outputEntry id="Output_A3_1"><text>false</text></outputEntry>
+        <outputEntry id="Output_A3_2"><text>"AWAIT_REMEDIATION"</text></outputEntry>
+        <outputEntry id="Output_A3_3"><text>"BUSINESS_INSURANCE"</text></outputEntry>
+      </rule>
+
+      <rule id="Rule_BgcChConsider">
+        <inputEntry id="Entry_A4_1"><text>-</text></inputEntry>
+        <inputEntry id="Entry_A4_2"><text>-</text></inputEntry>
+        <inputEntry id="Entry_A4_3"><text>"CONSIDER"</text></inputEntry>
+        <inputEntry id="Entry_A4_4"><text>-</text></inputEntry>
+        <inputEntry id="Entry_A4_5"><text>-</text></inputEntry>
+        <outputEntry id="Output_A4_1"><text>false</text></outputEntry>
+        <outputEntry id="Output_A4_2"><text>"BLOCK_COMPLIANCE"</text></outputEntry>
+        <outputEntry id="Output_A4_3"><text>"CRIMINAL_HISTORY_ADVERSE"</text></outputEntry>
+      </rule>
+
+      <rule id="Rule_BgcChPending">
+        <inputEntry id="Entry_A5_1"><text>-</text></inputEntry>
+        <inputEntry id="Entry_A5_2"><text>-</text></inputEntry>
+        <inputEntry id="Entry_A5_3"><text>not("CLEAR")</text></inputEntry>
+        <inputEntry id="Entry_A5_4"><text>-</text></inputEntry>
+        <inputEntry id="Entry_A5_5"><text>-</text></inputEntry>
+        <outputEntry id="Output_A5_1"><text>false</text></outputEntry>
+        <outputEntry id="Output_A5_2"><text>"AWAIT_REMEDIATION"</text></outputEntry>
+        <outputEntry id="Output_A5_3"><text>"CRIMINAL_HISTORY_PENDING"</text></outputEntry>
+      </rule>
+
+      <rule id="Rule_BgcRtwNotClear">
+        <inputEntry id="Entry_A6_1"><text>-</text></inputEntry>
+        <inputEntry id="Entry_A6_2"><text>-</text></inputEntry>
+        <inputEntry id="Entry_A6_3"><text>-</text></inputEntry>
+        <inputEntry id="Entry_A6_4"><text>not("CLEAR")</text></inputEntry>
+        <inputEntry id="Entry_A6_5"><text>-</text></inputEntry>
+        <outputEntry id="Output_A6_1"><text>false</text></outputEntry>
+        <outputEntry id="Output_A6_2"><text>"BLOCK_COMPLIANCE"</text></outputEntry>
+        <outputEntry id="Output_A6_3"><text>"RIGHT_TO_WORK_INVALID"</text></outputEntry>
+      </rule>
+
+      <rule id="Rule_DefaultCatchAll">
+        <inputEntry id="Entry_A7_1"><text>-</text></inputEntry>
+        <inputEntry id="Entry_A7_2"><text>-</text></inputEntry>
+        <inputEntry id="Entry_A7_3"><text>-</text></inputEntry>
+        <inputEntry id="Entry_A7_4"><text>-</text></inputEntry>
+        <inputEntry id="Entry_A7_5"><text>-</text></inputEntry>
+        <outputEntry id="Output_A7_1"><text>false</text></outputEntry>
+        <outputEntry id="Output_A7_2"><text>"AWAIT_REMEDIATION"</text></outputEntry>
+        <outputEntry id="Output_A7_3"><text>"INCOMPLETE_REQUIREMENTS"</text></outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="DMNDiagram_ActivationGate">
+      <dmndi:DMNShape id="DMNShape_decision_activation_gate" dmnElementRef="decision_activation_gate">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

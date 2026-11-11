@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/DMN/20151101/dmn.xsd"
+             xmlns:camunda="http://camunda.org/schema/1.0/dmn"
+             id="Definitions_ZoneEligibility"
+             name="Zone Eligibility Definitions"
+             namespace="http://camunda.org/schema/1.0/dmn">
+
+  <decision id="decision_zone_vehicle_eligibility" name="Zone &amp; Vehicle Eligibility Check" camunda:historyTimeToLive="30">
+    <decisionTable id="DecisionTable_ZoneEligibility" hitPolicy="FIRST">
+      <input id="Input_isZoneOpen" label="Is Zone Open" camunda:inputVariable="isZoneOpen">
+        <inputExpression id="InputExpression_isZoneOpen" typeRef="boolean">
+          <text>isZoneOpen</text>
+        </inputExpression>
+      </input>
+      <input id="Input_isVehicleSupported" label="Is Vehicle Supported" camunda:inputVariable="isVehicleSupported">
+        <inputExpression id="InputExpression_isVehicleSupported" typeRef="boolean">
+          <text>isVehicleSupported</text>
+        </inputExpression>
+      </input>
+      <input id="Input_capacityStatus" label="Capacity Status" camunda:inputVariable="capacityStatus">
+        <inputExpression id="InputExpression_capacityStatus" typeRef="string">
+          <text>capacityStatus</text>
+        </inputExpression>
+      </input>
+
+      <output id="Output_eligibilityResult" label="Eligibility Result" name="eligibilityResult" typeRef="string" />
+      <output id="Output_routingTarget" label="Routing Target" name="routingTarget" typeRef="string" />
+      <output id="Output_rejectionReason" label="Rejection Reason" name="rejectionReason" typeRef="string" />
+
+      <rule id="Rule_ZoneClosed">
+        <inputEntry id="Entry_1_1"><text>false</text></inputEntry>
+        <inputEntry id="Entry_1_2"><text></text></inputEntry>
+        <inputEntry id="Entry_1_3"><text></text></inputEntry>
+        <outputEntry id="Output_1_1"><text>"SURPLUS"</text></outputEntry>
+        <outputEntry id="Output_1_2"><text>"SurplusEndEvent"</text></outputEntry>
+        <outputEntry id="Output_1_3"><text>"ZONE_CLOSED"</text></outputEntry>
+      </rule>
+
+      <rule id="Rule_VehicleUnsupported">
+        <inputEntry id="Entry_2_1"><text>true</text></inputEntry>
+        <inputEntry id="Entry_2_2"><text>false</text></inputEntry>
+        <inputEntry id="Entry_2_3"><text></text></inputEntry>
+        <outputEntry id="Output_2_1"><text>"SURPLUS"</text></outputEntry>
+        <outputEntry id="Output_2_2"><text>"SurplusEndEvent"</text></outputEntry>
+        <outputEntry id="Output_2_3"><text>"VEHICLE_UNSUPPORTED_IN_ZONE"</text></outputEntry>
+      </rule>
+
+      <rule id="Rule_CapacitySurplus">
+        <inputEntry id="Entry_3_1"><text>true</text></inputEntry>
+        <inputEntry id="Entry_3_2"><text>true</text></inputEntry>
+        <inputEntry id="Entry_3_3"><text>"CAPACITY_SURPLUS"</text></inputEntry>
+        <outputEntry id="Output_3_1"><text>"SURPLUS"</text></outputEntry>
+        <outputEntry id="Output_3_2"><text>"SurplusEndEvent"</text></outputEntry>
+        <outputEntry id="Output_3_3"><text>"ZONE_CAPACITY_EXCEEDED"</text></outputEntry>
+      </rule>
+
+      <rule id="Rule_CapacityWaitlist">
+        <inputEntry id="Entry_4_1"><text>true</text></inputEntry>
+        <inputEntry id="Entry_4_2"><text>true</text></inputEntry>
+        <inputEntry id="Entry_4_3"><text>"WAITLIST_ONLY"</text></inputEntry>
+        <outputEntry id="Output_4_1"><text>"SURPLUS"</text></outputEntry>
+        <outputEntry id="Output_4_2"><text>"SurplusEndEvent"</text></outputEntry>
+        <outputEntry id="Output_4_3"><text>"ZONE_WAITLIST_ONLY"</text></outputEntry>
+      </rule>
+
+      <rule id="Rule_Eligible">
+        <inputEntry id="Entry_5_1"><text>true</text></inputEntry>
+        <inputEntry id="Entry_5_2"><text>true</text></inputEntry>
+        <inputEntry id="Entry_5_3"><text>"CAPACITY_OPEN"</text></inputEntry>
+        <outputEntry id="Output_5_1"><text>"ELIGIBLE"</text></outputEntry>
+        <outputEntry id="Output_5_2"><text>"RequirementsSubprocess"</text></outputEntry>
+        <outputEntry id="Output_5_3"><text>"NONE"</text></outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+</definitions>
